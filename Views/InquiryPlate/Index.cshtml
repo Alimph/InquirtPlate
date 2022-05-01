@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inquiry Plate</title>
+</head>
+<body dir="rtl">
+    <div class="container mt-3">
+        <div class="col-md-4">
+            <label for="LicensePlate">شماره پلاک</label>
+            <input class="form-control" type="text" id="LicensePlate" value="1234567">
+            <div class="float-start mt-3">
+                <button class="btn btn-primary" onclick="Inquiry()">استعلام</button>
+            </div>
+        </div>
+        <table class="table table-bordered mt-2 d-none">
+            <thead>
+                <tr>
+                    <td>تاریخ</td>
+                    <td>مبلغ</td>
+                    <td>شرح</td>
+                </tr>
+            </thead>
+            <tbody id="Content"></tbody>
+        </table>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        function Inquiry() {
+            $("tbody tr").remove();
+            let myData = {
+                LicensePlate: $("#LicensePlate").val()
+            }
+            $.ajax({
+                url: "/InquiryPlate/GetInquiry",
+                type: "Get",
+                data: myData,
+                dataType: "Json",
+                beforeSend: function () {
+                    console.log("Start Ajax");
+                },
+                success: function (response) {
+                    if (response.length > 0) {
+                        $.each(response, function (index, item) {
+                            let templete = `<tr>
+                                                     <td>${item.dateTime}</td>
+                                                     <td>${item.price}</td>
+                                                     <td>${item.description}</td>
+                                                     </tr>`
+                            $("#Content").append(templete);
+                            $("table").removeClass("d-none")
+                        })
+                    }
+                    else
+                        alert("هیچ تخلفی برای این شماره پلاک ثبت نشده است");
+                },
+                complete: function () {
+                    console.log("End Ajax");
+                },
+                error: function (jqXHR, textStatus) {
+                    //textStatus: "success", "notmodified", "nocontent", "error", "timeout", "abort", or "parsererror"
+                    alert("خطا در عملیات");
+                }
+            })
+        }
+    </script>
+</body>
+</html>
