@@ -1,2 +1,2 @@
-# EnumToSelectList
-convert enum to selectList in asp core
+# Inquiry Plate
+Ajax in asp core 6
